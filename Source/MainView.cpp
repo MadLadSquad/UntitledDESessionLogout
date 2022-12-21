@@ -1,6 +1,7 @@
 #include "MainView.hpp"
 #include <unistd.h>
 #include <pwd.h>
+#include <sys/sysinfo.h>
 
 ude_session_logout::MainView::MainView()
 {
@@ -8,6 +9,9 @@ ude_session_logout::MainView::MainView()
     auto pwd = getpwuid(uid);
 
     user = pwd ? pwd->pw_name : "user";
+    struct sysinfo info{};
+    if (sysinfo(&info) == 0 && info.totalswap > 0)
+        bHasSwap = true;
 }
 
 void ude_session_logout::MainView::begin()
@@ -51,6 +55,15 @@ void ude_session_logout::MainView::tick(float deltaTime)
     {
         suspend();
         UImGui::Instance::shutdown();
+    }
+    if (bHasSwap)
+    {
+        ImGui::SameLine();
+        if (ImGui::Button("Hibernate"))
+        {
+            hibernate();
+            UImGui::Instance::shutdown();
+        }
     }
 
     // This is the shutdown for the application not to be confused with the actual shutdown above
@@ -153,6 +166,30 @@ void ude_session_logout::MainView::suspend() noexcept
         return;
 
     data.message = dbus_message_new_method_call("org.freedesktop.login1", "/org/freedesktop/login1", "org.freedesktop.login1.Manager", "Suspend");
+
+    dbus_bool_t bForce = 1;
+    dbus_message_append_args(data.message, DBUS_TYPE_BOOLEAN, &bForce, DBUS_TYPE_INVALID);
+
+    dbus_connection_send_with_reply(data.conn, data.message, &data.pending, -1);
+    dbus_connection_flush(data.conn);
+
+    dbus_pending_call_block(data.pending);
+
+    data.reply = dbus_pending_call_steal_reply(data.pending);
+
+    if (dbus_message_get_type(data.reply) == DBUS_MESSAGE_TYPE_ERROR)
+        Logger::log("Error when putting the system to sleep! Error: ", UVKLog::UVK_LOG_TYPE_ERROR, dbus_message_get_error_name(data.reply));
+    destroyDBus(data);
+}
+
+
+void ude_session_logout::MainView::hibernate() noexcept
+{
+    auto data = initDBus();
+    if (data.bErrored)
+        return;
+
+    data.message = dbus_message_new_method_call("org.freedesktop.login1", "/org/freedesktop/login1", "org.freedesktop.login1.Manager", "Hibernate");
 
     dbus_bool_t bForce = 1;
     dbus_message_append_args(data.message, DBUS_TYPE_BOOLEAN, &bForce, DBUS_TYPE_INVALID);

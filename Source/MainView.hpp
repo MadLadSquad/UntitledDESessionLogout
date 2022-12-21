@@ -14,12 +14,14 @@ namespace ude_session_logout
         virtual ~MainView() override;
     private:
         UImGui::FString user;
+        bool bHasSwap = false;
 
         static void logout() noexcept;
         static void poweroff() noexcept;
         static void restart() noexcept;
 
         static void suspend() noexcept;
+        static void hibernate() noexcept;
 
         struct DBusData
         {
