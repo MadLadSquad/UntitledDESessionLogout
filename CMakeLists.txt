@@ -30,7 +30,7 @@ include_directories("Source/" "Framework/ThirdParty/yaml-cpp/include/yaml-cpp" "
         "Framework/ThirdParty/glfw/include" "Framework/ThirdParty/glew/include" "Framework/ThirdParty/imgui/backends/everything"
         "Framework/ThirdParty/imgui/" "Framework/Core/" "Framework/Renderer/" "Framework/ThirdParty/logger/src/"
         "Framework/ThirdParty/source-libraries/" "Framework/ThirdParty/yaml-cpp/include" "Framework/Modules"
-        "/usr/include/dbus-1.0/")
+        "/usr/include/dbus-1.0/" )
 
 
 link_directories(ThirdParty/glew/lib)
@@ -58,7 +58,7 @@ else()
 endif()
 
 add_library(UntitledImGuiFramework SHARED ${UGUI_SRC} ${UGUI_HEAD} Generated/BuildDef.hpp ${UGUI_IMPLOT_SRC} ${UGUI_IMPLOT_HEAD})
-add_executable(ude-session-logout Generated/main.cpp ${UGUI_HEAD} ${EXEC_SRC} Generated/BuildDef.hpp ${UGUI_IMPLOT_HEAD})
+add_executable(ude-session-logout Generated/main.cpp ${UGUI_HEAD} ${EXEC_SRC} Generated/BuildDef.hpp ${UGUI_IMPLOT_HEAD} Source/dbus/dbus-arch-deps.h)
 
 set_target_properties(UntitledImGuiFramework PROPERTIES LINKER_LANGUAGE CXX)
 set_target_properties(ude-session-logout PROPERTIES LINKER_LANGUAGE CXX)
