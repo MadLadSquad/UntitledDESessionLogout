@@ -7,6 +7,10 @@ currently supported features:
 - [x] Suspend the user
 - [x] Hybernate the user
 
+## Preview
+![image](https://user-images.githubusercontent.com/40400590/208991632-61d382d0-9bcd-435a-9c23-45017f0904c5.png)
+
+
 ## Dependencies
 This application depends on the following outside the standard UntitledImGuiFramework:
 1. dbus
