@@ -96,8 +96,9 @@ void ude_session_logout::MainView::logout() noexcept
         return;
     data.message = dbus_message_new_method_call("org.freedesktop.login1", "/org/freedesktop/login1", "org.freedesktop.login1.Manager", "TerminateSession");
 
+    char* sid = session_id.data();
     // Append the session ID to the message
-    dbus_message_append_args(data.message, DBUS_TYPE_STRING, &session_id, DBUS_TYPE_INVALID);
+    dbus_message_append_args(data.message, DBUS_TYPE_STRING, &sid, DBUS_TYPE_INVALID);
 
     // Send the message and get the response
     dbus_connection_send_with_reply(data.conn, data.message, &data.pending, -1);
