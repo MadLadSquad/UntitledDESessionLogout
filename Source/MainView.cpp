@@ -28,7 +28,7 @@ void ude_session_logout::MainView::tick(float deltaTime)
     ImGui::Text(" Log out the following user: %s", user.c_str());
 
     // Just create a new line with padding
-    ImGui::Text(" ");
+    ImGui::Text("");
     ImGui::SameLine();
     if (ImGui::Button("Log Out"))
     {
@@ -68,7 +68,7 @@ void ude_session_logout::MainView::tick(float deltaTime)
 
     // This is the shutdown for the application not to be confused with the actual shutdown above
     // Add padding on the new line here
-    ImGui::Text(" ");
+    ImGui::Text("");
     ImGui::SameLine();
     if (ImGui::Button("Cancel"))
         UImGui::Instance::shutdown();
