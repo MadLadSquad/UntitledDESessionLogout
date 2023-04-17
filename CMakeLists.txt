@@ -93,7 +93,7 @@ include_directories("Source/" "Framework/ThirdParty/yaml-cpp/include/yaml-cpp" "
         "Framework/ThirdParty/vulkan-headers/include")
 
 
-link_directories("ThirdParty/glew/lib" UVKBuildTool/build)
+link_directories("ThirdParty/glew/lib" "Framework/ThirdParty/vulkan" UVKBuildTool/build)
 
 if (UIMGUI_PLATFORM STREQUAL "DESKTOP")
     file(GLOB_RECURSE IMGUI_SRC "Framework/ThirdParty/imgui/backends/imgui_impl_glfw.cpp"
