@@ -17,7 +17,7 @@ ude_session_logout::MainView::MainView()
 void ude_session_logout::MainView::begin()
 {
     beginAutohandle();
-
+    UImGui::Window::Platform::setWindowType(X11_WINDOW_TYPE_SPLASH);
 }
 
 void ude_session_logout::MainView::tick(float deltaTime)
