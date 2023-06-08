@@ -4,8 +4,11 @@
 [![trello](https://img.shields.io/badge/Trello-UDE-blue])](https://trello.com/b/HmfuRY2K/untitleddesktop)
 [![Discord](https://img.shields.io/discord/717037253292982315.svg?label=&logo=discord&logoColor=ffffff&color=7389D8&labelColor=6A7EC2)](https://discord.gg/4wgH8ZE)
 
-The session logout utility for the UntitledDesktopEnvironment. It provides both a simple CLI and GUI method to log out of the current session. Here are the
-currently supported features:
+![image](https://github.com/MadLadSquad/UntitledDESessionLogout/assets/40400590/ac666164-9f37-49ce-802c-353556b0d3bf)
+
+
+The session logout utility for the UntitledDesktopEnvironment. It provides both a simple CLI and GUI method to log out of the 
+current session. Currently supported features:
 - [x] Log out the user from the current session
 - [x] Restart the user's computer
 - [x] Power off the user's computer
