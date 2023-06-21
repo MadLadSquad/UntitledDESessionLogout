@@ -91,7 +91,10 @@ void ude_session_logout::MainView::logout() noexcept
     if (data.bErrored)
         return;
 
-    std::string session_id = getSessionID(data);
+    auto uid = geteuid();
+    auto pwd = getpwuid(uid);
+
+    std::string session_id = getSessionID(data, pwd->pw_name);
     if (session_id.empty())
         return;
     data.message = dbus_message_new_method_call("org.freedesktop.login1", "/org/freedesktop/login1", "org.freedesktop.login1.Manager", "TerminateSession");
@@ -230,7 +233,7 @@ void ude_session_logout::MainView::destroyDBus(ude_session_logout::MainView::DBu
     dbus_connection_unref(data.conn);
 }
 
-std::string ude_session_logout::MainView::getSessionID(ude_session_logout::MainView::DBusData& data) noexcept
+std::string ude_session_logout::MainView::getSessionID(ude_session_logout::MainView::DBusData& data, const std::string& username) noexcept
 {
     std::string sessionID;
     data.message = dbus_message_new_method_call("org.freedesktop.login1", "/org/freedesktop/login1", "org.freedesktop.login1.Manager", "ListSessions");
@@ -257,15 +260,13 @@ std::string ude_session_logout::MainView::getSessionID(ude_session_logout::MainV
                 dbus_message_iter_recurse(&array_iter, &struct_iter);
 
                 char* id;
-                char* user;
+                char* userN;
                 dbus_message_iter_get_basic(&struct_iter, &id);
                 dbus_message_iter_next(&struct_iter);
                 dbus_message_iter_next(&struct_iter);
-                dbus_message_iter_get_basic(&struct_iter, &user);
+                dbus_message_iter_get_basic(&struct_iter, &userN);
 
-                //user_name = strdup(user_name);
-                std::cout << id << std::endl;
-                if (std::string(user) == std::string("i-use-gentoo-btw"))
+                if (std::string(userN) == username)
                 {
                     sessionID = id;
                     break;

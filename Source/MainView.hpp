@@ -36,7 +36,7 @@ namespace ude_session_logout
 
         static DBusData initDBus() noexcept;
         static void destroyDBus(DBusData& data) noexcept;
-        static std::string getSessionID(DBusData& data) noexcept;
+        static std::string getSessionID(DBusData& data, const std::string& username) noexcept;
     };
 }
 

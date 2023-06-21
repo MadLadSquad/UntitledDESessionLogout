@@ -19,3 +19,9 @@ enabled-modules:
   toggles: false
   text_utils: false
   cli_parser: false
+additional-installs:
+  unix:
+    - file: Config/Dist/com.madladsquad.ude-session-logout.service
+      directory: share/dbus-1/services
+      macro-name: UDE_SESSION_LOGOUT_SERVICE_CONFIG_DIR
+      is-directory: false
