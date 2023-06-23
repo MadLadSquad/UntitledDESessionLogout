@@ -1,0 +1,12 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=UntitledDesktop Session Logout
+GenericName=SessionLogout
+Comment=Allows the user to log out, power off, restart and put the computer to sleep using a GUI
+Icon=ude-session-logout
+TryExec=ude-session-logout
+Exec=ude-session-logout
+Categories=System;Utility;
+Terminal=false
+StartupNotify=false
