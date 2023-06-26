@@ -1,6 +1,7 @@
 #pragma once
 #include <Framework.hpp>
 #include "MainView.hpp"
+#include <Generated/Config.hpp>
 
 namespace ude_session_logout
 {

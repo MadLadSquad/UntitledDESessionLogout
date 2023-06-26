@@ -201,7 +201,7 @@ file(GLOB_RECURSE UGUI_HEAD "Framework/Core/*.hpp" "Framework/Renderer/*.hpp" ${
         "Framework/Modules/OS/*.h" "Framework/Modules/OS/*.hpp")
 
 file(GLOB_RECURSE UGUI_APP_SRC "Source/*.cpp")
-file(GLOB_RECURSE UGUI_APP_HEAD "Source/*.hpp")
+file(GLOB_RECURSE UGUI_APP_HEAD "Source/*.hpp" "Generated/Config.hpp")
 
 file(GLOB_RECURSE EXEC_SRC "")
 

@@ -2,7 +2,11 @@
 
 ude_session_logout::Instance::Instance()
 {
-    initInfo.inlineComponents = { &mainView };
+    initInfo =
+    {
+        .inlineComponents = { &mainView },
+        UIMGUI_INIT_INFO_DEFAULT_DIRS,
+    };
 }
 
 void ude_session_logout::Instance::begin()
