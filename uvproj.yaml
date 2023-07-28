@@ -2,7 +2,8 @@ name: "ude-session-logout"
 version: "1.0.0.0"
 engine-version: "1.0.0.0"
 build-mode-static: false
-build-mode-vendor: true
+build-mode-vendor: false
+system-wide: true
 enabled-modules:
   os: true
   dbus: true
@@ -21,10 +22,6 @@ enabled-modules:
   cli_parser: false
 additional-installs:
   unix:
-    - file: Config/Dist/com.madladsquad.ude-session-logout.service
-      directory: share/dbus-1/services
-      macro-name: UDE_SESSION_LOGOUT_SERVICE_CONFIG_DIR
-      is-directory: false
     - file: Config/Dist/com.madladsquad.ude-session-logout.desktop
       directory: share/applications
       macro-name: UDE_SESSION_LOGOUT_DESKTOP_FILE_DIR
