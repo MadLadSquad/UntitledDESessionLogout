@@ -18,6 +18,7 @@ void ude_session_logout::MainView::begin()
 {
     beginAutohandle();
     UImGui::Window::Platform::setWindowType(X11_WINDOW_TYPE_SPLASH);
+    initDBus();
 }
 
 void ude_session_logout::MainView::tick(float deltaTime)
@@ -87,200 +88,191 @@ ude_session_logout::MainView::~MainView()
 
 void ude_session_logout::MainView::logout() noexcept
 {
-    auto data = initDBus();
-    if (data.bErrored)
-        return;
-
     auto uid = geteuid();
     auto pwd = getpwuid(uid);
 
-    std::string session_id = getSessionID(data, pwd->pw_name);
+    UDBus::Error error;
+    UDBus::Message message;
+    UDBus::PendingCall pending;
+    UDBus::Message reply;
+
+    std::string session_id = getSessionID(pwd->pw_name);
     if (session_id.empty())
         return;
-    data.message = dbus_message_new_method_call("org.freedesktop.login1", "/org/freedesktop/login1", "org.freedesktop.login1.Manager", "TerminateSession");
+
+    message.new_method_call("org.freedesktop.login1", "/org/freedesktop/login1", "org.freedesktop.login1.Manager", "TerminateSession");
 
     char* sid = session_id.data();
     // Append the session ID to the message
-    dbus_message_append_args(data.message, DBUS_TYPE_STRING, &sid, DBUS_TYPE_INVALID);
+    message.append_args_simple(&sid);
 
     // Send the message and get the response
-    dbus_connection_send_with_reply(data.conn, data.message, &data.pending, -1);
-    dbus_connection_flush(data.conn);
+    conn.send_with_reply(message, pending, -1);
+    conn.flush();
 
-    dbus_pending_call_block(data.pending);
+    pending.block();
 
-    data.reply = dbus_pending_call_steal_reply(data.pending);
-    if (dbus_message_get_type(data.reply) == DBUS_MESSAGE_TYPE_ERROR)
-        Logger::log("Error when logging out the system! Error: ", UVKLog::UVK_LOG_TYPE_ERROR, dbus_message_get_error_name(data.reply));
-
-    destroyDBus(data);
+    reply.pending_call_steal_reply(pending);
+    if (reply.get_type() == DBUS_MESSAGE_TYPE_ERROR)
+        Logger::log("Error when logging out the system! Error: ", UVKLog::UVK_LOG_TYPE_ERROR, reply.get_error_name());
 }
 
 void ude_session_logout::MainView::poweroff() noexcept
 {
-    auto data = initDBus();
-    if (data.bErrored)
-        return;
+    UDBus::Error error;
+    UDBus::Message message;
+    UDBus::PendingCall pending;
+    UDBus::Message reply;
 
-    data.message = dbus_message_new_method_call("org.freedesktop.login1", "/org/freedesktop/login1", "org.freedesktop.login1.Manager", "PowerOff");
+    message.new_method_call("org.freedesktop.login1", "/org/freedesktop/login1", "org.freedesktop.login1.Manager", "PowerOff");
 
-    dbus_bool_t bForce = 1;
-    dbus_message_append_args(data.message, DBUS_TYPE_BOOLEAN, &bForce, DBUS_TYPE_INVALID);
+    udbus_bool_t bForce = 1;
+    message.append_args_simple(&bForce);
 
-    dbus_connection_send_with_reply(data.conn, data.message, &data.pending, -1);
-    dbus_connection_flush(data.conn);
+    conn.send_with_reply(message, pending, -1);
+    conn.flush();
 
-    dbus_pending_call_block(data.pending);
+    pending.block();
 
-    data.reply = dbus_pending_call_steal_reply(data.pending);
+    reply.pending_call_steal_reply(pending);
 
-    if (dbus_message_get_type(data.reply) == DBUS_MESSAGE_TYPE_ERROR)
-        Logger::log("Error when powering off the system! Error: ", UVKLog::UVK_LOG_TYPE_ERROR, dbus_message_get_error_name(data.reply));
-
-    destroyDBus(data);
+    if (reply.get_type() == DBUS_MESSAGE_TYPE_ERROR)
+        Logger::log("Error when powering off the system! Error: ", UVKLog::UVK_LOG_TYPE_ERROR, reply.get_error_name());
 }
 
 void ude_session_logout::MainView::restart() noexcept
 {
-    auto data = initDBus();
-    if (data.bErrored)
-        return;
+    UDBus::Error error;
+    UDBus::Message message;
+    UDBus::PendingCall pending;
+    UDBus::Message reply;
 
-    data.message = dbus_message_new_method_call("org.freedesktop.login1", "/org/freedesktop/login1", "org.freedesktop.login1.Manager", "Reboot");
+    message.new_method_call("org.freedesktop.login1", "/org/freedesktop/login1", "org.freedesktop.login1.Manager", "Reboot");
 
-    dbus_bool_t bForce = 1;
-    dbus_message_append_args(data.message, DBUS_TYPE_BOOLEAN, &bForce, DBUS_TYPE_INVALID);
+    udbus_bool_t bForce = 1;
+    message.append_args_simple(&bForce);
 
-    dbus_connection_send_with_reply(data.conn, data.message, &data.pending, -1);
-    dbus_connection_flush(data.conn);
+    conn.send_with_reply(message, pending, -1);
+    conn.flush();
 
-    dbus_pending_call_block(data.pending);
+    pending.block();
 
-    data.reply = dbus_pending_call_steal_reply(data.pending);
+    reply.pending_call_steal_reply(pending);
 
-    if (dbus_message_get_type(data.reply) == DBUS_MESSAGE_TYPE_ERROR)
-        Logger::log("Error when restarting the system! Error: ", UVKLog::UVK_LOG_TYPE_ERROR, dbus_message_get_error_name(data.reply));
-    destroyDBus(data);
+    if (reply.get_type() == DBUS_MESSAGE_TYPE_ERROR)
+        Logger::log("Error when restarting the system! Error: ", UVKLog::UVK_LOG_TYPE_ERROR, reply.get_error_name());
 }
 
 void ude_session_logout::MainView::suspend() noexcept
 {
-    auto data = initDBus();
-    if (data.bErrored)
-        return;
+    UDBus::Error error;
+    UDBus::Message message;
+    UDBus::PendingCall pending;
+    UDBus::Message reply;
 
-    data.message = dbus_message_new_method_call("org.freedesktop.login1", "/org/freedesktop/login1", "org.freedesktop.login1.Manager", "Suspend");
+    message.new_method_call("org.freedesktop.login1", "/org/freedesktop/login1", "org.freedesktop.login1.Manager", "Suspend");
 
-    dbus_bool_t bForce = 1;
-    dbus_message_append_args(data.message, DBUS_TYPE_BOOLEAN, &bForce, DBUS_TYPE_INVALID);
+    udbus_bool_t bForce = 1;
+    message.append_args_simple(&bForce);
 
-    dbus_connection_send_with_reply(data.conn, data.message, &data.pending, -1);
-    dbus_connection_flush(data.conn);
+    conn.send_with_reply(message, pending, -1);
+    conn.flush();
 
-    dbus_pending_call_block(data.pending);
+    pending.block();
 
-    data.reply = dbus_pending_call_steal_reply(data.pending);
+    reply.pending_call_steal_reply(pending);
 
-    if (dbus_message_get_type(data.reply) == DBUS_MESSAGE_TYPE_ERROR)
-        Logger::log("Error when putting the system to sleep! Error: ", UVKLog::UVK_LOG_TYPE_ERROR, dbus_message_get_error_name(data.reply));
-    destroyDBus(data);
+    if (reply.get_type() == DBUS_MESSAGE_TYPE_ERROR)
+        Logger::log("Error when putting the system to sleep! Error: ", UVKLog::UVK_LOG_TYPE_ERROR, reply.get_error_name());
 }
 
 
 void ude_session_logout::MainView::hibernate() noexcept
 {
-    auto data = initDBus();
-    if (data.bErrored)
-        return;
+    UDBus::Error error;
+    UDBus::Message message;
+    UDBus::PendingCall pending;
+    UDBus::Message reply;
+    
+    message.new_method_call("org.freedesktop.login1", "/org/freedesktop/login1", "org.freedesktop.login1.Manager", "Hibernate");
 
-    data.message = dbus_message_new_method_call("org.freedesktop.login1", "/org/freedesktop/login1", "org.freedesktop.login1.Manager", "Hibernate");
+    udbus_bool_t bForce = 1;
+    message.append_args_simple(&bForce);
 
-    dbus_bool_t bForce = 1;
-    dbus_message_append_args(data.message, DBUS_TYPE_BOOLEAN, &bForce, DBUS_TYPE_INVALID);
+    conn.send_with_reply(message, pending, -1);
+    conn.flush();
 
-    dbus_connection_send_with_reply(data.conn, data.message, &data.pending, -1);
-    dbus_connection_flush(data.conn);
+    pending.block();
 
-    dbus_pending_call_block(data.pending);
+    reply.pending_call_steal_reply(pending);
 
-    data.reply = dbus_pending_call_steal_reply(data.pending);
-
-    if (dbus_message_get_type(data.reply) == DBUS_MESSAGE_TYPE_ERROR)
-        Logger::log("Error when putting the system to sleep! Error: ", UVKLog::UVK_LOG_TYPE_ERROR, dbus_message_get_error_name(data.reply));
-    destroyDBus(data);
+    if (reply.get_type() == DBUS_MESSAGE_TYPE_ERROR)
+        Logger::log("Error when putting the system to sleep! Error: ", UVKLog::UVK_LOG_TYPE_ERROR, reply.get_error_name());
 }
 
-ude_session_logout::MainView::DBusData ude_session_logout::MainView::initDBus() noexcept
+void ude_session_logout::MainView::initDBus() noexcept
 {
-    DBusData data{};
-    dbus_error_init(&data.error);
-    data.conn = dbus_bus_get(DBUS_BUS_SYSTEM, &data.error);
+    UDBus::Error error;
+    conn.bus_get(DBUS_BUS_SYSTEM, error);
 
-    if (dbus_error_is_set(&data.error))
+    if (error.is_set())
     {
-        Logger::log("Error when connecting to the system bus! Error: ", UVKLog::UVK_LOG_TYPE_ERROR, data.error.message);
-        dbus_error_free(&data.error);
-        data.bErrored = true;
+        Logger::log("Error when connecting to the system bus! Error: ", UVKLog::UVK_LOG_TYPE_ERROR, error.message());
+        error.free();
+        UImGui::Instance::shutdown();
     }
-    return data;
 }
 
-void ude_session_logout::MainView::destroyDBus(ude_session_logout::MainView::DBusData& data) noexcept
-{
-    dbus_message_unref(data.reply);
-    dbus_pending_call_unref(data.pending);
-    dbus_message_unref(data.message);
-    dbus_connection_unref(data.conn);
-}
-
-std::string ude_session_logout::MainView::getSessionID(ude_session_logout::MainView::DBusData& data, const std::string& username) noexcept
+std::string ude_session_logout::MainView::getSessionID(const std::string& username) noexcept
 {
     std::string sessionID;
-    data.message = dbus_message_new_method_call("org.freedesktop.login1", "/org/freedesktop/login1", "org.freedesktop.login1.Manager", "ListSessions");
+    UDBus::Error error;
+    UDBus::Message message;
+    UDBus::PendingCall pending;
+    UDBus::Message reply;
 
-    dbus_connection_send_with_reply(data.conn, data.message, &data.pending, -1);
-    dbus_connection_flush(data.conn);
+    message.new_method_call("org.freedesktop.login1", "/org/freedesktop/login1", "org.freedesktop.login1.Manager", "ListSessions");
 
-    dbus_pending_call_block(data.pending);
+    conn.send_with_reply(message, pending, -1);
+    conn.flush();
 
-    data.reply = dbus_pending_call_steal_reply(data.pending);
+    pending.block();
+    reply.pending_call_steal_reply(pending);
 
-    if (dbus_message_get_type(data.reply) != DBUS_MESSAGE_TYPE_ERROR)
+    if (reply.get_type() != DBUS_MESSAGE_TYPE_ERROR)
     {
-        DBusMessageIter iter, array_iter;
-        dbus_message_iter_init(data.reply, &iter);
-
-        if (dbus_message_iter_get_arg_type(&iter) == DBUS_TYPE_ARRAY)
+        UDBus::Iterator it, arrayIt;
+        it.setGet(reply, arrayIt, true);
+        
+        if (it.get_arg_type() == DBUS_TYPE_ARRAY)
         {
-            dbus_message_iter_recurse(&iter, &array_iter);
-
-            while (dbus_message_iter_get_arg_type(&array_iter) == DBUS_TYPE_STRUCT)
+            it.recurse();
+            
+            while (arrayIt.get_arg_type() == DBUS_TYPE_STRUCT)
             {
-                DBusMessageIter struct_iter;
-                dbus_message_iter_recurse(&array_iter, &struct_iter);
-
+                UDBus::Iterator structIt;
+                arrayIt.setGet(reply, structIt, false);
+                arrayIt.recurse();
+                
                 char* id;
-                char* userN;
-                dbus_message_iter_get_basic(&struct_iter, &id);
-                dbus_message_iter_next(&struct_iter);
-                dbus_message_iter_next(&struct_iter);
-                dbus_message_iter_get_basic(&struct_iter, &userN);
-
-                if (std::string(userN) == username)
+                char* userName;
+                
+                structIt.get_basic(&id);
+                structIt.next();
+                structIt.next();
+                structIt.get_basic(&userName);
+                
+                if (username == userName)
                 {
                     sessionID = id;
                     break;
                 }
-                dbus_message_iter_next(&array_iter);
+                arrayIt.next();
             }
         }
     }
     else
-        Logger::log("Error getting the session list! Error: ", UVKLog::UVK_LOG_TYPE_ERROR, data.error.message);
-
-    dbus_message_unref(data.reply);
-    dbus_pending_call_unref(data.pending);
-    dbus_message_unref(data.message);
+        Logger::log("Error getting the session list! Error: ", UVKLog::UVK_LOG_TYPE_ERROR, error.message());
 
     return sessionID;
 }

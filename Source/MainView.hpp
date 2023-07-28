@@ -16,27 +16,17 @@ namespace ude_session_logout
         UImGui::FString user;
         bool bHasSwap = false;
 
-        static void logout() noexcept;
-        static void poweroff() noexcept;
-        static void restart() noexcept;
+        void logout() noexcept;
+        void poweroff() noexcept;
+        void restart() noexcept;
 
-        static void suspend() noexcept;
-        static void hibernate() noexcept;
+        void suspend() noexcept;
+        void hibernate() noexcept;
 
-        struct DBusData
-        {
-            DBusError error;
-            DBusConnection* conn;
-            DBusMessage* message;
-            DBusPendingCall* pending;
-            DBusMessage* reply;
+        UDBus::Connection conn;
 
-            bool bErrored = false;
-        } data;
-
-        static DBusData initDBus() noexcept;
-        static void destroyDBus(DBusData& data) noexcept;
-        static std::string getSessionID(DBusData& data, const std::string& username) noexcept;
+        void initDBus() noexcept;
+        std::string getSessionID(const std::string& username) noexcept;
     };
 }
 
