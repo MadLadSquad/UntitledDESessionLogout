@@ -25,6 +25,11 @@ namespace ude_session_logout
 
         UDBus::Connection conn;
 
+        UDBus::Error error;
+        UDBus::Message message;
+        UDBus::PendingCall pending;
+        UDBus::Message reply;
+
         void initDBus() noexcept;
         std::string getSessionID(const std::string& username) noexcept;
     };

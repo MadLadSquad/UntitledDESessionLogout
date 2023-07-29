@@ -91,11 +91,6 @@ void ude_session_logout::MainView::logout() noexcept
     auto uid = geteuid();
     auto pwd = getpwuid(uid);
 
-    UDBus::Error error;
-    UDBus::Message message;
-    UDBus::PendingCall pending;
-    UDBus::Message reply;
-
     std::string session_id = getSessionID(pwd->pw_name);
     if (session_id.empty())
         return;
@@ -119,11 +114,6 @@ void ude_session_logout::MainView::logout() noexcept
 
 void ude_session_logout::MainView::poweroff() noexcept
 {
-    UDBus::Error error;
-    UDBus::Message message;
-    UDBus::PendingCall pending;
-    UDBus::Message reply;
-
     message.new_method_call("org.freedesktop.login1", "/org/freedesktop/login1", "org.freedesktop.login1.Manager", "PowerOff");
 
     udbus_bool_t bForce = 1;
@@ -142,11 +132,6 @@ void ude_session_logout::MainView::poweroff() noexcept
 
 void ude_session_logout::MainView::restart() noexcept
 {
-    UDBus::Error error;
-    UDBus::Message message;
-    UDBus::PendingCall pending;
-    UDBus::Message reply;
-
     message.new_method_call("org.freedesktop.login1", "/org/freedesktop/login1", "org.freedesktop.login1.Manager", "Reboot");
 
     udbus_bool_t bForce = 1;
@@ -165,11 +150,6 @@ void ude_session_logout::MainView::restart() noexcept
 
 void ude_session_logout::MainView::suspend() noexcept
 {
-    UDBus::Error error;
-    UDBus::Message message;
-    UDBus::PendingCall pending;
-    UDBus::Message reply;
-
     message.new_method_call("org.freedesktop.login1", "/org/freedesktop/login1", "org.freedesktop.login1.Manager", "Suspend");
 
     udbus_bool_t bForce = 1;
@@ -189,11 +169,6 @@ void ude_session_logout::MainView::suspend() noexcept
 
 void ude_session_logout::MainView::hibernate() noexcept
 {
-    UDBus::Error error;
-    UDBus::Message message;
-    UDBus::PendingCall pending;
-    UDBus::Message reply;
-    
     message.new_method_call("org.freedesktop.login1", "/org/freedesktop/login1", "org.freedesktop.login1.Manager", "Hibernate");
 
     udbus_bool_t bForce = 1;
@@ -212,7 +187,6 @@ void ude_session_logout::MainView::hibernate() noexcept
 
 void ude_session_logout::MainView::initDBus() noexcept
 {
-    UDBus::Error error;
     conn.bus_get(DBUS_BUS_SYSTEM, error);
 
     if (error.is_set())
@@ -226,10 +200,6 @@ void ude_session_logout::MainView::initDBus() noexcept
 std::string ude_session_logout::MainView::getSessionID(const std::string& username) noexcept
 {
     std::string sessionID;
-    UDBus::Error error;
-    UDBus::Message message;
-    UDBus::PendingCall pending;
-    UDBus::Message reply;
 
     message.new_method_call("org.freedesktop.login1", "/org/freedesktop/login1", "org.freedesktop.login1.Manager", "ListSessions");
 
@@ -273,6 +243,10 @@ std::string ude_session_logout::MainView::getSessionID(const std::string& userna
     }
     else
         Logger::log("Error getting the session list! Error: ", UVKLog::UVK_LOG_TYPE_ERROR, error.message());
+
+    message.unref();
+    reply.unref();
+    pending.unref();
 
     return sessionID;
 }
