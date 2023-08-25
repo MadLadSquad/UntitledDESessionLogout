@@ -4,6 +4,7 @@ engine-version: "1.0.0.0"
 build-mode-static: false
 build-mode-vendor: false
 system-wide: true
+install-framework: true
 enabled-modules:
   os: true
   dbus: true
