@@ -28,3 +28,7 @@ This application depends on the following outside the standard UntitledImGuiFram
 Additionally the user needs to be a part of the `power` group to be part of this, to create the group simply run the following:
 1. `root # groupadd power`
 1. `root # gpasswd -a <username> power`
+
+## Building
+This is a standard [UntitledImGuiFramework](https://github.com/MadLadSquad/UntitledImGuiFramework) project. Building instructions can be found 
+[here](https://github.com/MadLadSquad/UntitledImGuiFramework/wiki/Collaborating-on-a-project-with-the-framework#setting-up-another-persons-project).
