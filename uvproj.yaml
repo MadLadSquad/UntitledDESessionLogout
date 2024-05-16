@@ -10,8 +10,6 @@ enabled-modules:
   dbus: true
   uexec: false
   theming: true
-  notifications: false
-  polkit: false
   ufont: false
   i18n: true
   undo_redo: false
