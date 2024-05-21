@@ -99,7 +99,7 @@ void ude_session_logout::MainView::logout() noexcept
 
     char* sid = session_id.data();
     // Append the session ID to the message
-    message.append_args_simple(&sid);
+    message << sid;
 
     // Send the message and get the response
     conn.send_with_reply(message, pending, -1);
@@ -117,7 +117,7 @@ void ude_session_logout::MainView::poweroff() noexcept
     message.new_method_call("org.freedesktop.login1", "/org/freedesktop/login1", "org.freedesktop.login1.Manager", "PowerOff");
 
     udbus_bool_t bForce = 1;
-    message.append_args_simple(&bForce);
+    message << bForce;
 
     conn.send_with_reply(message, pending, -1);
     conn.flush();
@@ -135,7 +135,7 @@ void ude_session_logout::MainView::restart() noexcept
     message.new_method_call("org.freedesktop.login1", "/org/freedesktop/login1", "org.freedesktop.login1.Manager", "Reboot");
 
     udbus_bool_t bForce = 1;
-    message.append_args_simple(&bForce);
+    message << bForce;
 
     conn.send_with_reply(message, pending, -1);
     conn.flush();
@@ -153,7 +153,7 @@ void ude_session_logout::MainView::suspend() noexcept
     message.new_method_call("org.freedesktop.login1", "/org/freedesktop/login1", "org.freedesktop.login1.Manager", "Suspend");
 
     udbus_bool_t bForce = 1;
-    message.append_args_simple(&bForce);
+    message << bForce;
 
     conn.send_with_reply(message, pending, -1);
     conn.flush();
@@ -172,7 +172,7 @@ void ude_session_logout::MainView::hibernate() noexcept
     message.new_method_call("org.freedesktop.login1", "/org/freedesktop/login1", "org.freedesktop.login1.Manager", "Hibernate");
 
     udbus_bool_t bForce = 1;
-    message.append_args_simple(&bForce);
+    message << bForce;
 
     conn.send_with_reply(message, pending, -1);
     conn.flush();
