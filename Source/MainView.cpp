@@ -212,7 +212,7 @@ std::string ude_session_logout::MainView::getSessionID(const std::string& userna
     if (reply.get_type() != DBUS_MESSAGE_TYPE_ERROR)
     {
         UDBus::Iterator it, arrayIt;
-        it.setGet(reply, arrayIt, true);
+        it.setGet(reply, &arrayIt, true);
         
         if (it.get_arg_type() == DBUS_TYPE_ARRAY)
         {
@@ -221,7 +221,7 @@ std::string ude_session_logout::MainView::getSessionID(const std::string& userna
             while (arrayIt.get_arg_type() == DBUS_TYPE_STRUCT)
             {
                 UDBus::Iterator structIt;
-                arrayIt.setGet(reply, structIt, false);
+                arrayIt.setGet(reply, &structIt, false);
                 arrayIt.recurse();
                 
                 char* id;
