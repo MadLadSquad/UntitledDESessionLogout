@@ -211,35 +211,27 @@ std::string ude_session_logout::MainView::getSessionID(const std::string& userna
 
     if (reply.get_type() != DBUS_MESSAGE_TYPE_ERROR)
     {
-        UDBus::Iterator it, arrayIt;
-        it.setGet(reply, arrayIt, true);
-        
-        if (it.get_arg_type() == DBUS_TYPE_ARRAY)
+        std::vector<UDBus::Struct<const char*, uint32_t, const char*, const char*, const char*>> v;
+        auto p = UDBus::Type
         {
-            it.recurse();
-            
-            while (arrayIt.get_arg_type() == DBUS_TYPE_STRUCT)
+            v,
+            UDBus::bump()
+        };
+
+        auto result = reply.handleMessage(p);
+        if (result != UDBus::RESULT_SUCCESS)
+            Logger::log("Couldn't handle parsing the message reply. Error: ", UVK_LOG_TYPE_ERROR, result);
+
+        for (auto& a : v)
+        {
+            if (username == *a.next()->next()->data)
             {
-                UDBus::Iterator structIt;
-                arrayIt.setGet(reply, structIt, false);
-                arrayIt.recurse();
-                
-                char* id;
-                char* userName;
-                
-                structIt.get_basic(&id);
-                structIt.next();
-                structIt.next();
-                structIt.get_basic(&userName);
-                
-                if (username == userName)
-                {
-                    sessionID = id;
-                    break;
-                }
-                arrayIt.next();
+                sessionID = *a.data;
+                break;
             }
         }
+        decltype(p)::destroyComplex(v);
+        decltype(p)::destroy(p);
     }
     else
         Logger::log("Error getting the session list! Error: ", UVKLog::UVK_LOG_TYPE_ERROR, error.message());
