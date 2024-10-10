@@ -109,7 +109,7 @@ void ude_session_logout::MainView::logout() noexcept
 
     reply.pending_call_steal_reply(pending);
     if (reply.get_type() == DBUS_MESSAGE_TYPE_ERROR)
-        Logger::log("Error when logging out the system! Error: ", UVKLog::UVK_LOG_TYPE_ERROR, reply.get_error_name());
+        Logger::log("Error when logging out the system! Error: ", ULOG_LOG_TYPE_ERROR, reply.get_error_name());
 }
 
 void ude_session_logout::MainView::poweroff() noexcept
@@ -127,7 +127,7 @@ void ude_session_logout::MainView::poweroff() noexcept
     reply.pending_call_steal_reply(pending);
 
     if (reply.get_type() == DBUS_MESSAGE_TYPE_ERROR)
-        Logger::log("Error when powering off the system! Error: ", UVKLog::UVK_LOG_TYPE_ERROR, reply.get_error_name());
+        Logger::log("Error when powering off the system! Error: ", ULOG_LOG_TYPE_ERROR, reply.get_error_name());
 }
 
 void ude_session_logout::MainView::restart() noexcept
@@ -145,7 +145,7 @@ void ude_session_logout::MainView::restart() noexcept
     reply.pending_call_steal_reply(pending);
 
     if (reply.get_type() == DBUS_MESSAGE_TYPE_ERROR)
-        Logger::log("Error when restarting the system! Error: ", UVKLog::UVK_LOG_TYPE_ERROR, reply.get_error_name());
+        Logger::log("Error when restarting the system! Error: ", ULOG_LOG_TYPE_ERROR, reply.get_error_name());
 }
 
 void ude_session_logout::MainView::suspend() noexcept
@@ -163,7 +163,7 @@ void ude_session_logout::MainView::suspend() noexcept
     reply.pending_call_steal_reply(pending);
 
     if (reply.get_type() == DBUS_MESSAGE_TYPE_ERROR)
-        Logger::log("Error when putting the system to sleep! Error: ", UVKLog::UVK_LOG_TYPE_ERROR, reply.get_error_name());
+        Logger::log("Error when putting the system to sleep! Error: ", ULOG_LOG_TYPE_ERROR, reply.get_error_name());
 }
 
 
@@ -182,7 +182,7 @@ void ude_session_logout::MainView::hibernate() noexcept
     reply.pending_call_steal_reply(pending);
 
     if (reply.get_type() == DBUS_MESSAGE_TYPE_ERROR)
-        Logger::log("Error when putting the system to sleep! Error: ", UVKLog::UVK_LOG_TYPE_ERROR, reply.get_error_name());
+        Logger::log("Error when putting the system to sleep! Error: ", ULOG_LOG_TYPE_ERROR, reply.get_error_name());
 }
 
 void ude_session_logout::MainView::initDBus() noexcept
@@ -191,7 +191,7 @@ void ude_session_logout::MainView::initDBus() noexcept
 
     if (error.is_set())
     {
-        Logger::log("Error when connecting to the system bus! Error: ", UVKLog::UVK_LOG_TYPE_ERROR, error.message());
+        Logger::log("Error when connecting to the system bus! Error: ", ULOG_LOG_TYPE_ERROR, error.message());
         error.free();
         UImGui::Instance::shutdown();
     }
@@ -220,7 +220,7 @@ std::string ude_session_logout::MainView::getSessionID(const std::string& userna
 
         auto result = reply.handleMessage(p);
         if (result != UDBus::RESULT_SUCCESS)
-            Logger::log("Couldn't handle parsing the message reply. Error: ", UVK_LOG_TYPE_ERROR, result);
+            Logger::log("Couldn't handle parsing the message reply. Error: ", ULOG_LOG_TYPE_ERROR, result);
 
         for (auto& a : v)
         {
@@ -234,7 +234,7 @@ std::string ude_session_logout::MainView::getSessionID(const std::string& userna
         decltype(p)::destroy(p);
     }
     else
-        Logger::log("Error getting the session list! Error: ", UVKLog::UVK_LOG_TYPE_ERROR, error.message());
+        Logger::log("Error getting the session list! Error: ", ULOG_LOG_TYPE_ERROR, error.message());
 
     message.unref();
     reply.unref();
