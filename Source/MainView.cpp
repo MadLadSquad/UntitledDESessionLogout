@@ -3,10 +3,10 @@
 #include <pwd.h>
 #include <sys/sysinfo.h>
 
-ude_session_logout::MainView::MainView()
+ude_session_logout::MainView::MainView() noexcept
 {
-    auto uid = geteuid();
-    auto pwd = getpwuid(uid);
+    const auto uid = geteuid();
+    const auto pwd = getpwuid(uid);
 
     user = pwd ? pwd->pw_name : "user";
     struct sysinfo info{};
@@ -14,14 +14,14 @@ ude_session_logout::MainView::MainView()
         bHasSwap = true;
 }
 
-void ude_session_logout::MainView::begin()
+void ude_session_logout::MainView::begin() noexcept
 {
     beginAutohandle();
     UImGui::Window::Platform::setWindowType(X11_WINDOW_TYPE_SPLASH);
     initDBus();
 }
 
-void ude_session_logout::MainView::tick(float deltaTime)
+void ude_session_logout::MainView::tick(const float deltaTime) noexcept
 {
     tickAutohandle(deltaTime);
 
@@ -75,23 +75,23 @@ void ude_session_logout::MainView::tick(float deltaTime)
         UImGui::Instance::shutdown();
 }
 
-void ude_session_logout::MainView::end()
+void ude_session_logout::MainView::end() noexcept
 {
     endAutohandle();
 
 }
 
-ude_session_logout::MainView::~MainView()
+ude_session_logout::MainView::~MainView() noexcept
 {
     user.clear();
 }
 
 void ude_session_logout::MainView::logout() noexcept
 {
-    auto uid = geteuid();
-    auto pwd = getpwuid(uid);
+    const auto uid = geteuid();
+    const auto pwd = getpwuid(uid);
 
-    std::string session_id = getSessionID(pwd->pw_name);
+    UImGui::FString session_id = getSessionID(pwd->pw_name);
     if (session_id.empty())
         return;
 
@@ -116,7 +116,7 @@ void ude_session_logout::MainView::poweroff() noexcept
 {
     message.new_method_call("org.freedesktop.login1", "/org/freedesktop/login1", "org.freedesktop.login1.Manager", "PowerOff");
 
-    udbus_bool_t bForce = 1;
+    const udbus_bool_t bForce = 1;
     message << bForce;
 
     conn.send_with_reply(message, pending, -1);
@@ -134,7 +134,7 @@ void ude_session_logout::MainView::restart() noexcept
 {
     message.new_method_call("org.freedesktop.login1", "/org/freedesktop/login1", "org.freedesktop.login1.Manager", "Reboot");
 
-    udbus_bool_t bForce = 1;
+    const udbus_bool_t bForce = 1;
     message << bForce;
 
     conn.send_with_reply(message, pending, -1);
@@ -152,7 +152,7 @@ void ude_session_logout::MainView::suspend() noexcept
 {
     message.new_method_call("org.freedesktop.login1", "/org/freedesktop/login1", "org.freedesktop.login1.Manager", "Suspend");
 
-    udbus_bool_t bForce = 1;
+    const udbus_bool_t bForce = 1;
     message << bForce;
 
     conn.send_with_reply(message, pending, -1);
@@ -197,9 +197,9 @@ void ude_session_logout::MainView::initDBus() noexcept
     }
 }
 
-std::string ude_session_logout::MainView::getSessionID(const std::string& username) noexcept
+UImGui::FString ude_session_logout::MainView::getSessionID(const UImGui::FString& username) noexcept
 {
-    std::string sessionID;
+    UImGui::FString sessionID;
 
     message.new_method_call("org.freedesktop.login1", "/org/freedesktop/login1", "org.freedesktop.login1.Manager", "ListSessions");
 

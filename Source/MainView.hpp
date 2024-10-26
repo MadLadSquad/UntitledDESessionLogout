@@ -4,14 +4,14 @@
 
 namespace ude_session_logout
 {
-    class UIMGUI_PUBLIC_API MainView : public UImGui::InlineComponent
+    class UIMGUI_PUBLIC_API MainView final : public UImGui::InlineComponent
     {
     public:
-        MainView();
-        virtual void begin() override;
-        virtual void tick(float deltaTime) override;
-        virtual void end() override;
-        virtual ~MainView() override;
+        MainView() noexcept;
+        virtual void begin() noexcept override;
+        virtual void tick(float deltaTime) noexcept override;
+        virtual void end() noexcept override;
+        virtual ~MainView() noexcept override;
     private:
         UImGui::FString user;
         bool bHasSwap = false;
@@ -31,7 +31,7 @@ namespace ude_session_logout
         UDBus::Message reply;
 
         void initDBus() noexcept;
-        std::string getSessionID(const std::string& username) noexcept;
+        UImGui::FString getSessionID(const UImGui::FString& username) noexcept;
     };
 }
 

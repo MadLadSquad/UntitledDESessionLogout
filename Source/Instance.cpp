@@ -1,6 +1,6 @@
 #include "Instance.hpp"
 
-ude_session_logout::Instance::Instance()
+ude_session_logout::Instance::Instance() noexcept
 {
     initInfo =
     {
@@ -9,31 +9,25 @@ ude_session_logout::Instance::Instance()
     };
 }
 
-void ude_session_logout::Instance::begin()
+void ude_session_logout::Instance::begin() noexcept
 {
     beginAutohandle();
 
 }
 
-void ude_session_logout::Instance::tick(float deltaTime)
+void ude_session_logout::Instance::tick(const float deltaTime) noexcept
 {
     tickAutohandle(deltaTime);
 
 }
 
-void ude_session_logout::Instance::end()
+void ude_session_logout::Instance::end() noexcept
 {
     endAutohandle();
 
 }
 
-ude_session_logout::Instance::~Instance()
+void ude_session_logout::Instance::onEventConfigureStyle(ImGuiStyle& style, ImGuiIO& io) noexcept
 {
 
 }
-
-void ude_session_logout::Instance::onEventConfigureStyle(ImGuiStyle& style, ImGuiIO& io)
-{
-
-}
-
