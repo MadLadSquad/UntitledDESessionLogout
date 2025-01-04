@@ -10,3 +10,4 @@ Exec=ude-session-logout
 Categories=System;Utility;
 Terminal=false
 StartupNotify=false
+StartupWMClass=ude-session-logout
