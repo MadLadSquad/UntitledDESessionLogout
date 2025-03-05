@@ -12,7 +12,6 @@ enabled-modules:
   theming: true
   ufont: false
   i18n: true
-  undo_redo: false
   plotting: false
   knobs: false
   spinners: false
