@@ -24,7 +24,7 @@ jobs:
         id: mod
         run: |
           tag="${{ github.ref_name }}"
-          echo "out=youyin-web-${tag:1}" >> $GITHUB_OUTPUT
+          echo "out=ude-session-logout-${tag:1}" >> $GITHUB_OUTPUT
       - name: Create archive
         shell: bash
         run: |
