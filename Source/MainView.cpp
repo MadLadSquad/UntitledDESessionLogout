@@ -97,7 +97,6 @@ void ude_session_logout::MainView::logout() noexcept
 
     message.new_method_call("org.freedesktop.login1", "/org/freedesktop/login1", "org.freedesktop.login1.Manager", "TerminateSession");
     
-    // Append the session ID to the message
     char* sid = session_id.data();
     UDBus::MessageBuilder builder(message);
     builder << sid << UDBus::EndMessage;
