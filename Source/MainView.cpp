@@ -96,10 +96,11 @@ void ude_session_logout::MainView::logout() noexcept
         return;
 
     message.new_method_call("org.freedesktop.login1", "/org/freedesktop/login1", "org.freedesktop.login1.Manager", "TerminateSession");
-
-    char* sid = session_id.data();
+    
     // Append the session ID to the message
-    message << sid;
+    char* sid = session_id.data();
+    UDBus::MessageBuilder builder(message);
+    builder << sid << UDBus::EndMessage;
 
     // Send the message and get the response
     conn.send_with_reply(message, pending, -1);
@@ -117,8 +118,9 @@ void ude_session_logout::MainView::poweroff() noexcept
     message.new_method_call("org.freedesktop.login1", "/org/freedesktop/login1", "org.freedesktop.login1.Manager", "PowerOff");
 
     const udbus_bool_t bForce = 1;
-    message << bForce;
-
+    UDBus::MessageBuilder builder(message);
+    builder << bForce << UDBus::EndMessage;
+    
     conn.send_with_reply(message, pending, -1);
     conn.flush();
 
@@ -135,7 +137,8 @@ void ude_session_logout::MainView::restart() noexcept
     message.new_method_call("org.freedesktop.login1", "/org/freedesktop/login1", "org.freedesktop.login1.Manager", "Reboot");
 
     const udbus_bool_t bForce = 1;
-    message << bForce;
+    UDBus::MessageBuilder builder(message);
+    builder << bForce << UDBus::EndMessage;
 
     conn.send_with_reply(message, pending, -1);
     conn.flush();
@@ -151,9 +154,10 @@ void ude_session_logout::MainView::restart() noexcept
 void ude_session_logout::MainView::suspend() noexcept
 {
     message.new_method_call("org.freedesktop.login1", "/org/freedesktop/login1", "org.freedesktop.login1.Manager", "Suspend");
-
+    
     const udbus_bool_t bForce = 1;
-    message << bForce;
+    UDBus::MessageBuilder builder(message);
+    builder << bForce << UDBus::EndMessage;
 
     conn.send_with_reply(message, pending, -1);
     conn.flush();
@@ -171,8 +175,9 @@ void ude_session_logout::MainView::hibernate() noexcept
 {
     message.new_method_call("org.freedesktop.login1", "/org/freedesktop/login1", "org.freedesktop.login1.Manager", "Hibernate");
 
-    udbus_bool_t bForce = 1;
-    message << bForce;
+    const udbus_bool_t bForce = 1;
+    UDBus::MessageBuilder builder(message);
+    builder << bForce << UDBus::EndMessage;
 
     conn.send_with_reply(message, pending, -1);
     conn.flush();
